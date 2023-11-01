@@ -1,48 +1,83 @@
-def solve_n_queens(n):
-    def is_safe(board, row, col):
-        # Verifica si es seguro colocar una reina en la posición (row, col)
+#Algoritmo_reinas.py
+#
+#Ricardo Pacheco Urias
+#Abraham Sered Gómez Martínez
+#Alexandra Iveth Rodriguez Castellanos
+#Luis Arturo Dominguez Alatorre
+
+#Función que resuelve el problema de las N reinas recibiendo un número (total de reinas en el tablero NxN) como parámetro
+def resolver_n_reinas(n):
+    
+    # Función que checa si es seguro colocar una reina en una posición específica
+    def es_seguro(tablero, fila, col):
+
+        # Checa si hay una reina dentro de la misma fila
         for i in range(col):
-            if board[row][i] == 1:
+            if tablero[fila][i] == 1:
                 return False
-        for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
-            if board[i][j] == 1:
+            
+        # Checa si hay una reina dentro de la diagonal que apunta a la esquina superior izquierda
+        for i, j in zip(range(fila, -1, -1), range(col, -1, -1)):
+            if tablero[i][j] == 1:
                 return False
-        for i, j in zip(range(row, n, 1), range(col, -1, -1)):
-            if board[i][j] == 1:
+        # Checa si hay una reina dentro de la diagonal que apunta a la esquina inferior izquierda
+        for i, j in zip(range(fila, n), range(col, -1, -1)):
+            if tablero[i][j] == 1:
                 return False
+            
         return True
 
-    def solve(board, col, count):
-        if col >= n:
-            # Todas las reinas están colocadas, imprime el tablero con número
-            print(f"Tablero {count}:")
-            print("")
-            print_board(board)
-            print("")
-            return count + 1
+    # Función recursiva que busca todas las soluciones al problema, toma un tablero y una columna como parámetros
+    # Coloca una reina en una columna y luego se llama recursivamente para la siguiente columna, cuando encuentra
+    # una solución válida la agrega al arreglo de soluciones
+    def resolver(tablero, col):
+
+        if col == n:
+            soluciones.append([fila[:] for fila in tablero])
+            return
 
         for i in range(n):
-            if is_safe(board, i, col):
-                board[i][col] = 1
-                count = solve(board, col + 1, count)
-                board[i][col] = 0
+            if es_seguro(tablero, i, col):
+                tablero[i][col] = 1
+                resolver(tablero, col + 1)
+                tablero[i][col] = 0
 
-        return count
-
-    def print_board(board):
-        for i in range(n):
-            for j in range(n):
-                print(board[i][j], end=" ")
+    soluciones = []
+    #Pal tablero NxN
+    tablero = [[0] * n for _ in range(n)]
+    #Esto es pa empezar toda la operación desde la primera posicion de todo el tablero
+    resolver(tablero, 0)
+    
+    if len(soluciones) == 0:
+        print(f"No se encontraron soluciones para el problema de las {n} reinas.")
+    else:
+        print(f"Se encontraron un total de {len(soluciones)} soluciones al problema de las {n} reinas.")
+        
+        while True:
+            print("¿Desea proceder con la impresión de soluciones?: SI: 1  NO: cualquier num")
+            decision = int(input())
+            if decision == 1:
+                break
+            else:
+                return
+                
+        for idx, soluciones in enumerate(soluciones):
+            print(f"Solución {idx + 1}:")
+            for fila in soluciones:
+                print(" ".join(map(str, fila)))
             print()
 
-    board = [[0] * n for _ in range(n)]
 
-    solutions_count = solve(board, 0, 1)
-
-    if solutions_count == 1:
-        print("No hay más soluciones para el problema de las 8 reinas.")
+#Menú
+print("-------PROBLEMA DE LAS N REINAS--------")
+while True:
+    print("Ingrese el número de reinas a resolver:")
+    n = int(input())
+    # Llamada a la función para resolver el problema con 8 reinas
+    resolver_n_reinas(n)
+    print("Desea hacer otra operación? SI: 1 - NO: cualquier num")
+    decision = int(input())
+    if decision == 1:
+        continue
     else:
-        print(f"Se encontraron un total de {solutions_count - 1} soluciones al problema de las 8 reinas.")
-
-# Llamada a la función para resolver el problema con 8 reinas
-solve_n_queens(8)
+        break
